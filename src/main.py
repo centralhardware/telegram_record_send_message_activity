@@ -34,8 +34,12 @@ connection.commit()
 
 @client.on(events.NewMessage(outgoing=True))
 async def handler(event):
-    if event.raw_text != '/ping':
-        logging.info("triggered in chat %s\n on message: %s\n", event.chat.title, event.raw_text)
+    if event.raw_text != '/ping' and event.chat is not None:
+        if hasattr(event.chat, "title"):
+            title = event.chat.title
+        else:
+            title = event.chat.username
+        logging.info("triggered in chat %s\n on message: %s\n", title, event.raw_text)
         cursor.execute("""
             INSERT INTO statistic ( 
                 message,
@@ -43,7 +47,7 @@ async def handler(event):
                 created_at
             ) 
             VALUES ( '{}', '{}', current_timestamp );""".format(event.raw_text,
-                                                                event.chat.title))
+                                                                title))
         connection.commit()
 
 
