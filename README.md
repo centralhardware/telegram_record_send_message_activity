@@ -25,3 +25,43 @@ table structure:
 
 bot ignore `/ping` because [telegram_bot_alive_checker](https://github.com/centralhardware/telegram_bot_alive_checker) 
 on the same account 
+
+## analyze data with SQL
+
+### pretty print table
+
+```sql
+SELECT
+    id, substring(message from 0 for 180), chat, created_at 
+FROM "statistic";
+```
+
+### message count per channel
+
+```sql
+SELECT
+    count(*), chat 
+FROM "statistic" 
+GROUP BY chat 
+ORDER BY count DESC;
+```
+
+### evg message length per chat
+
+```sql
+SELECT 
+    chat, round(avg(length(message))) as len
+FROM "statistic"
+GROUP BY chat 
+ORDER BY len DESC;
+```
+
+### top message by length
+
+```sql
+SELECT chat, message, length(message) as len 
+FROM "statistic" 
+ORDER BY len DESC 
+LIMIT 10;
+```
+
