@@ -10,26 +10,26 @@ api_hash = os.getenv('API_HASH')
 telephone = os.getenv('TELEPHONE')
 client = TelegramClient('alex', api_id, api_hash)
 
-# user = os.getenv("DB_USER")
-# password = os.getenv("DB_PASSWORD")
-# host = os.getenv("DB_HOST")
-# port = os.getenv("DB_PORT")
-# database_name = os.getenv("DATABASE_NAME")
-# connection = psycopg2.connect(user=user,
-#                               password=password,
-#                               host=host,
-#                               port=port,
-#                               database=database_name)
-# cursor = connection.cursor()
-# cursor.execute("""
-#     CREATE TABLE IF NOT EXISTS statistic (
-#         id serial PRIMARY KEY,
-#         message TEXT,
-#         chat TEXT,
-#         created_at TIMESTAMP NOT NULL
-#     );
-# """)
-# connection.commit()
+user = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWORD")
+host = os.getenv("DB_HOST")
+port = os.getenv("DB_PORT")
+database_name = os.getenv("DATABASE_NAME")
+connection = psycopg2.connect(user=user,
+                              password=password,
+                              host=host,
+                              port=port,
+                              database=database_name)
+cursor = connection.cursor()
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS statistic (
+        id serial PRIMARY KEY,
+        message TEXT,
+        chat TEXT,
+        created_at TIMESTAMP NOT NULL
+    );
+""")
+connection.commit()
 
 
 @client.on(events.NewMessage(outgoing=True))
