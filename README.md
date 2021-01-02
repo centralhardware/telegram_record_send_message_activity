@@ -32,7 +32,7 @@ on the same account
 
 ```sql
 SELECT
-    id, substring(message from 0 for 180), chat, created_at 
+    id, substring(message from 0 for 150), chat, created_at 
 FROM "statistic";
 ```
 
