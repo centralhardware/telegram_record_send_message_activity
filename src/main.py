@@ -37,19 +37,29 @@ async def handler(event):
     if event.raw_text != '/ping' and event.chat is not None:
         if hasattr(event.chat, "title"):
             title = event.chat.title
-        else:
+        elif event.chat.username is not None:
             title = event.chat.username
-        logging.info("triggered in chat %s\n on message: %s\n", title, event.raw_text)
-        cursor.execute("""
-            INSERT INTO statistic ( 
-                message,
-                chat,
-                created_at
-            ) 
-            VALUES ( '{}', '{}', current_timestamp );""".format(event.raw_text,
-                                                                title))
-        connection.commit()
+        else:
+            return
+        if event.raw_text != '':
+            logging.info("triggered in chat %s\n on message: %s\n", title, event.raw_text)
+            try:
+                cursor.execute("""
+                    INSERT INTO statistic ( 
+                        message,
+                        chat,
+                        created_at
+                    ) 
+                    VALUES ( '{}', '{}', current_timestamp );""".format(event.raw_text,
+                                                                        title))
+                connection.commit()
+                logging.info("insert new message")
+            except psycopg2.errors.SyntaxError:
+                connection.rollback()
+                logging.info("rollback transaction")
 
+        else:
+            logging.info("ignore empty message")
 
 client.connect()
 client.start(phone=telephone)
