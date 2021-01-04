@@ -50,11 +50,10 @@ async def handler(event):
                         chat,
                         created_at
                     ) 
-                    VALUES ( '{}', '{}', current_timestamp );""".format(event.raw_text,
-                                                                        title))
+                    VALUES ( %s , %s , current_timestamp );""", (event.raw_text, title))
                 connection.commit()
                 logging.info("insert new message")
-            except psycopg2.errors.SyntaxError:
+            except Exception:
                 connection.rollback()
                 logging.info("rollback transaction")
 
