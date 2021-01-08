@@ -65,3 +65,16 @@ ORDER BY len DESC
 LIMIT 10;
 ```
 
+###  most used word
+
+```sql
+SELECT 
+    word, count(word) as count 
+FROM (
+    SELECT regexp_split_to_table(s.message, ' ') AS word 
+    FROM "statistic" s) AS words 
+GROUP BY word 
+ORDER BY count DESC 
+LIMIT 51;
+```
+
