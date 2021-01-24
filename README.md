@@ -78,3 +78,12 @@ ORDER BY count DESC
 LIMIT 51;
 ```
 
+### count of messages per day
+
+```sql
+SELECT 
+    count(*), date_trunc('day', created_at) as date 
+FROM "statistic" 
+GROUP BY date 
+ORDER BY date;
+```
