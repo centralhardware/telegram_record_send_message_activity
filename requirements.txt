@@ -1,2 +1,2 @@
-psycopg2~=2.8.6
 Telethon~=1.18.2
+clickhouse_connect=0.6.11
