@@ -23,19 +23,27 @@ clickhouse.command("""
                                                  chat String)
     ENGINE MergeTree ORDER BY date_time
 """)
+clickhouse.command("""
+    ALTER TABLE telegram_messages
+    ADD COLUMN IF NOT EXISTS chat_id String
+""")
 
 @client.on(events.NewMessage(outgoing=True))
 async def handler(event):
+    chat_title = ''
+    chat_id= ''
     if hasattr(event.chat, "title"):
-        title = event.chat.title
-    elif event.chat.username is not None:
-        title = event.chat.username
-    else:
-        return
+        chat_title = event.chat.title
+    if event.chat.username is not None:
+        chat_id = event.chat.username
+
+    if chat_title == '':
+        chat_title = chat_id
+
     if event.raw_text != '':
-        logging.info("triggered in chat %s\n on message: %s\n", title, event.raw_text)
-        data = [[datetime.now(), event.raw_text, title],]
-        clickhouse.insert('telegram_messages', data, ['date_time', 'message', 'chat'])
+        logging.info("triggered in chat %s\n on message: %s\n", chat_title, event.raw_text)
+        data = [[datetime.now(), event.raw_text, chat_title, chat_id],]
+        clickhouse.insert('telegram_messages', data, ['date_time', 'message', 'chat', 'chat_id'])
         logging.info("insert new message")
     else:
         logging.info("ignore empty message")
