@@ -15,7 +15,8 @@ client = TelegramClient('alex', api_id, api_hash)
 user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 host = os.getenv("DB_HOST")
-clickhouse = clickhouse_connect.get_client(host=host, port=8123, username=user, password=password)
+database = os.getenv("DB_DATABASE")
+clickhouse = clickhouse_connect.get_client(host=host, database=database, port=8123, username=user, password=password)
 clickhouse.command("""
     CREATE TABLE IF NOT EXISTS telegram_messages (
                                                  date_time DateTime,
