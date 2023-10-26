@@ -41,10 +41,23 @@ async def handler(event):
     if chat_title == '':
         chat_title = chat_id
 
+    admins = []
+    async for user in client.iter_participants(event.chat):
+        try:
+            if user.username.lower().endswith('bot'):
+                continue
+            if user.participant.admin_rights.delete_messages:
+                admins.append(user.username)
+        except AttributeError:
+            pass
+        except TypeError:
+            pass
+
     if event.raw_text != '':
         logging.info("triggered in chat %s\n on message: %s\n", chat_title, event.raw_text)
-        data = [[datetime.now(), event.raw_text, chat_title, chat_id],]
-        clickhouse.insert('telegram_messages', data, ['date_time', 'message', 'chat', 'chat_id'])
+        logging.info("fount admins: %s ", admins)
+        data = [[datetime.now(), event.raw_text, chat_title, chat_id, ','.join(admins)]]
+        clickhouse.insert('telegram_messages', data, ['date_time', 'message', 'chat', 'chat_id', 'admins'])
         logging.info("insert new message")
     else:
         logging.info("ignore empty message")
